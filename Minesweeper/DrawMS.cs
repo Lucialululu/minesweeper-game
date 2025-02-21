@@ -4,9 +4,9 @@ using Raylib_cs;
 namespace Minesweeper;
 
 public static class DrawMS {
-    public static void Bomb(int x, int y) {
-        Raylib.DrawCircle(x + MagicNumbers.CELL_WIDTH / 2, y + MagicNumbers.CELL_HEIGHT / 2, 10, Color.Black);
-    }
+    public static void Bomb(int x, int y, Texture2D bombTexture) {
+    Raylib.DrawTexture(bombTexture, x, y, Color.White);
+    }  
 
     public static void Number(string bombCount, int x, int y) {
         switch (bombCount) {
@@ -40,38 +40,39 @@ public static class DrawMS {
         }
         
     }
-    public static void Flag(int x, int y) {
-        Raylib.DrawTriangle(
-            new Vector2(x+4, y+4),
-            new Vector2(x+4, y + MagicNumbers.CELL_HEIGHT-4),
-            new Vector2(x + MagicNumbers.CELL_WIDTH-4, y + (MagicNumbers.CELL_HEIGHT-4) / 2), 
-            Color.Red
-        );
+    public static void Flag(int x, int y, Texture2D flagTexture) {
+        Raylib.DrawTexture(flagTexture, x, y, Color.White);
     }
-    public static void Layer(int x, int y) {
-        Raylib.DrawRectangle(x, y, MagicNumbers.CELL_WIDTH, MagicNumbers.CELL_WIDTH, Color.Gray);
-        Raylib.DrawRectangle(x, y, 4, MagicNumbers.CELL_HEIGHT, Color.LightGray);
-        Raylib.DrawRectangle(x, y, MagicNumbers.CELL_WIDTH, 4, Color.LightGray);
-        Raylib.DrawRectangle(x+4, y + MagicNumbers.CELL_HEIGHT-4, MagicNumbers.CELL_WIDTH-4, 4, Color.DarkGray);
-        Raylib.DrawRectangle(x+MagicNumbers.CELL_WIDTH-4, y+4, 4, MagicNumbers.CELL_HEIGHT-4, Color.DarkGray);
+
+    public static void Layer(int x, int y, int i, int j) {
+        Color lightGreen = new Color(170, 215, 81, 255); // Light green
+        Color darkGreen = new Color(162, 209, 73, 255); // Dark green
+
+        Color cellColor = ((i + j) % 2 == 0) ? lightGreen : darkGreen;
+        Raylib.DrawRectangle(x, y, MagicNumbers.CELL_WIDTH, MagicNumbers.CELL_WIDTH, cellColor);
     }
-    public static void LoseBomb(int x, int y) {
-        Raylib.DrawRectangle(x, y, MagicNumbers.CELL_WIDTH, MagicNumbers.CELL_WIDTH, Color.Red);
-        Raylib.DrawCircle(x + MagicNumbers.CELL_WIDTH / 2, y + MagicNumbers.CELL_HEIGHT / 2, 10, Color.Black);
+
+    public static void RevealedCell(int x, int y, int i, int j) {
+    Color lightBrown = new Color(205, 133, 63, 255); // Light brown
+    Color darkBrown = new Color(139, 69, 19, 255);   // Dark brown
+
+    Color cellColor = ((i + j) % 2 == 0) ? lightBrown : darkBrown;
+    Raylib.DrawRectangle(x, y, MagicNumbers.CELL_WIDTH, MagicNumbers.CELL_HEIGHT, cellColor);
     }
-    public static void FalseFlag(int x, int y) {
-        Raylib.DrawRectangle(x,y, MagicNumbers.CELL_WIDTH,MagicNumbers.CELL_HEIGHT,Color.White);
-        Raylib.DrawCircle(x + MagicNumbers.CELL_WIDTH / 2, y + MagicNumbers.CELL_HEIGHT / 2, 10, Color.Black);
-        Raylib.DrawLine(x,y,x+MagicNumbers.CELL_WIDTH,y+MagicNumbers.CELL_HEIGHT,Color.Red);
-        Raylib.DrawLine(x, y+MagicNumbers.CELL_HEIGHT,x+MagicNumbers.CELL_WIDTH,y,Color.Red);
+
+    public static void LoseBomb(int x, int y, Texture2D boomTexture) {
+    Raylib.DrawTexture(boomTexture, x, y, Color.White);
+    }
+    public static void FalseFlag(int x, int y, Texture2D nobombTexture) {
+    Raylib.DrawTexture(nobombTexture, x, y, Color.White);
     }
     public static void Reset(int width) {
-        Raylib.DrawText("Reset", width*40, 0, 40, Color.Black);
+        Raylib.DrawText("RESET", width*40, 0, 40, Color.Black);
     }
     public static void Win(int height) {
-        Raylib.DrawText("You Win!!!", 0, height * 40, 40, Color.Black);
+        Raylib.DrawText("YOU WIN!!!", 0, height * 40, 40, Color.Black);
     }
     public static void Time(string time) {
-        Raylib.DrawText(time, Raylib.GetScreenWidth() - 100, 50, 20, Color.Black);
+        Raylib.DrawText(time.ToUpper(), Raylib.GetScreenWidth() - 100, 50, 20, Color.Black);
     }
 }

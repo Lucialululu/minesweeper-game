@@ -7,6 +7,10 @@ class Game {
     private int height;
     private string name;
     private Grid grid;
+    private Texture2D bombTexture;
+    private Texture2D nobombTexture;
+    private Texture2D boomTexture;
+    private Texture2D flagTexture;
 
     public Game(int width, int height, string name) {
         this.width = width;
@@ -16,6 +20,10 @@ class Game {
     }
     public void Run() {
         Raylib.InitWindow(width, height, name);
+        bombTexture = Raylib.LoadTexture("bomb.png");
+        nobombTexture = Raylib.LoadTexture("no_bomb.png");
+        boomTexture = Raylib.LoadTexture("boom.png");
+        flagTexture = Raylib.LoadTexture("flag.png");
         bool first = true;
         bool lost = false;
         bool won = false;
@@ -72,9 +80,13 @@ class Game {
             int timeInt = (int)elapsedTime;
             DrawMS.Time($"Time: {timeInt}");
             DrawMS.Reset(16);
-            grid.Draw();
+            grid.Draw(bombTexture, nobombTexture, boomTexture, flagTexture);
             Raylib.EndDrawing();
         }
+        Raylib.UnloadTexture(bombTexture);
+        Raylib.UnloadTexture(nobombTexture);
+        Raylib.UnloadTexture(boomTexture);
+        Raylib.UnloadTexture(flagTexture);
         Raylib.CloseWindow();
     }
 }

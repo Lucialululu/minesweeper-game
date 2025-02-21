@@ -1,6 +1,7 @@
 namespace Minesweeper;
 using System;
 using System.Collections.Generic;
+using Raylib_cs;
 class Grid {
     public ICell[,] Cells { get; private set; }
     private int width;
@@ -105,7 +106,6 @@ class Grid {
         }
     }
 
-
     private void InitializeNumberCells(int width, int height) {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -203,7 +203,7 @@ class Grid {
             if (cell.Flagged && !cell.IsBomb) cell.FalseFlagged = true;
         }
     }
-    public void Draw() {
+    public void Draw(Texture2D bombTexture, Texture2D nobombTexture, Texture2D boomTexture, Texture2D flagTexture) {
         int cellWidth = MagicNumbers.CELL_WIDTH;  // Width of each cell
         int cellHeight = MagicNumbers.CELL_HEIGHT; // Height of each cell
 
@@ -216,7 +216,9 @@ class Grid {
                 // Drawing cell content (bomb or number)
                 switch (Cells[i, j].Name) {
                     case "Bomb":
-                        DrawMS.Bomb(xPos, yPos);
+                        if (!Cells[i, j].RevealedBombFirst) { // Only draw normal bomb if it hasn't exploded
+                            DrawMS.Bomb(xPos, yPos, bombTexture);
+                        }
                         break;
                     case "Number":
                         string bombCount = Cells[i, j].AdjacentBombs.ToString();
@@ -227,17 +229,24 @@ class Grid {
                 }
                 // Drawing layer on top of it
                 if (!Cells[i, j].Revealed) { 
-                    DrawMS.Layer(xPos, yPos);
+                    DrawMS.Layer(xPos, yPos, i, j); // Unrevealed (green checkerboard)
+                } else {
+                    DrawMS.RevealedCell(xPos, yPos, i, j); // Revealed (brown checkerboard)
+                    
+                    // Re-draw the number on top of the background
+                    if (Cells[i, j] is NumberCell numberCell && numberCell.AdjacentBombs > 0) {
+                        DrawMS.Number(numberCell.AdjacentBombs.ToString(), xPos, yPos);
+                    }
                 }
-                if (Cells[i,j].Flagged) {
-                    // Draw flag
-                    DrawMS.Flag(xPos, yPos);
+
+                if (Cells[i, j].Flagged && !Cells[i, j].FalseFlagged) { // Don't draw flag if it was a false flag
+                    DrawMS.Flag(xPos, yPos, flagTexture);
                 }
                 if (Cells[i,j].RevealedBombFirst) {
-                    DrawMS.LoseBomb(xPos, yPos);
+                    DrawMS.LoseBomb(xPos, yPos, boomTexture);
                 }
                 if (Cells[i,j].FalseFlagged) {
-                    DrawMS.FalseFlag(xPos, yPos);
+                    DrawMS.FalseFlag(xPos, yPos, nobombTexture);
                 }
             }
         }
